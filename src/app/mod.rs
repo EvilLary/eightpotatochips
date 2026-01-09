@@ -275,7 +275,7 @@ impl App {
 
         // mutli thread this shit??
         let pixels_out = shm.as_slice_mut::<u32>();
-        for (y, row) in pixels_out.chunks_mut(self.win_width as usize).enumerate() {
+        for (y, row) in pixels_out.chunks_mut(chip8::WIDTH * chip8::SCALE).enumerate() {
             let src_y = y / chip8::SCALE;
             for (x, pix) in row.iter_mut().enumerate() {
                 let src_x = x / chip8::SCALE;

@@ -435,6 +435,7 @@ const FONTSET_1: [u8; 80] = [
 
 pub const WIDTH: usize = 64;
 pub const HEIGHT: usize = 32;
+pub const SCALE: usize = 10;
 pub const MEMORY_SIZE: usize = 4096;
 
 use super::*;

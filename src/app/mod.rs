@@ -142,7 +142,8 @@ impl App {
 
         // Rust please let us have access to err in let-else syntax,
         // just like Zig
-        let (shm, fd) = match shm::ShmData::new(chip8::WIDTH * chip8::HEIGHT * 4) {
+        let size = chip8::WIDTH * chip8::SCALE * chip8::HEIGHT * chip8::SCALE * 4;
+        let (shm, fd) = match shm::ShmData::new(size) {
             Ok(d) => d,
             Err(e) => {
                 log!(ERR, "{}", e);
@@ -150,13 +151,13 @@ impl App {
             }
         };
 
-        let pool = wl_shm.create_pool(conn.writer(), fd, 64 * 32 * 4);
+        let pool = wl_shm.create_pool(conn.writer(), fd, size as i32);
         let wl_buffer = pool.create_buffer(
             conn.writer(),
             0,
-            chip8::WIDTH as i32,
-            chip8::HEIGHT as i32,
-            chip8::WIDTH as i32 * 4,
+            (chip8::SCALE * chip8::WIDTH) as i32,
+            (chip8::SCALE * chip8::HEIGHT) as i32,
+            (chip8::SCALE * chip8::WIDTH) as i32 * 4,
             wl_shm::Format::Xrgb8888 as u32,
         );
         pool.destroy(conn.writer());
@@ -177,8 +178,8 @@ impl App {
 
         xdg_toplevel.set_title(conn.writer(), "eightpotatochips");
         xdg_toplevel.set_app_id(conn.writer(), "github.evillary.eightpotatochips");
-        self.win_height = 32 * 10;
-        self.win_width = 64 * 10;
+        self.win_height = (chip8::SCALE * chip8::HEIGHT) as i32;
+        self.win_width = (chip8::SCALE * chip8::WIDTH) as i32;
         xdg_toplevel.set_min_size(conn.writer(), self.win_width, self.win_height);
         xdg_toplevel.set_max_size(conn.writer(), self.win_width, self.win_height);
         viewport.set_destination(conn.writer(), self.win_width, self.win_height);
@@ -271,15 +272,28 @@ impl App {
         let Some(wl_surface) = self.base_surface.as_ref() else {
             return;
         };
+
+        // mutli thread this shit??
         let pixels_out = shm.as_slice_mut::<u32>();
-        for (cell, out_p) in self.chip8.framebuffer.iter().zip(pixels_out) {
-            if *cell > 0 {
-                *out_p = 0x79b67b;
-            } else {
-                *out_p = 0x000000;
-                // *out_p = 0x141618;
+        for (y, row) in pixels_out.chunks_mut(self.win_width as usize).enumerate() {
+            let src_y = y / chip8::SCALE;
+            for (x, pix) in row.iter_mut().enumerate() {
+                let src_x = x / chip8::SCALE;
+                if self.chip8.framebuffer[src_y * chip8::WIDTH + src_x] != 0 {
+                    *pix = 0x79b67b;
+                } else {
+                    *pix = 0x000000;
+                }
             }
         }
+        // for (cell, out_p) in self.chip8.framebuffer.iter().zip(pixels_out) {
+        //     if *cell > 0 {
+        //         *out_p = 0x79b67b;
+        //     } else {
+        //         *out_p = 0x000000;
+        //         // *out_p = 0x141618;
+        //     }
+        // }
         wl_surface.attach(conn.writer(), self.wl_buffer.as_ref(), 0, 0);
         wl_surface.damage_buffer(conn.writer(), 0, 0, i32::MAX, i32::MAX);
         wl_surface.commit(conn.writer());

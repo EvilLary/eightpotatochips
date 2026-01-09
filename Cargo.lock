@@ -53,6 +53,7 @@ dependencies = [
 [[package]]
 name = "scr_protocols"
 version = "0.1.0"
+source = "git+https://github.com/EvilLary/scratchway#9c5d4740db4c1b66206f4588ff2f0b5349202644"
 dependencies = [
  "scr_scanner",
  "scratchway",
@@ -61,6 +62,7 @@ dependencies = [
 [[package]]
 name = "scr_scanner"
 version = "0.1.0"
+source = "git+https://github.com/EvilLary/scratchway#9c5d4740db4c1b66206f4588ff2f0b5349202644"
 dependencies = [
  "proc-macro2",
  "quick-xml",
@@ -70,6 +72,7 @@ dependencies = [
 [[package]]
 name = "scratchway"
 version = "0.1.1"
+source = "git+https://github.com/EvilLary/scratchway#9c5d4740db4c1b66206f4588ff2f0b5349202644"
 dependencies = [
  "libc",
  "scr_scanner",

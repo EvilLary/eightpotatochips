@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-scratchway = { path = "../scratchway/" }
-scr_protocols = { path = "../scratchway/scr_protocols/" }
-# scratchway = { git = "https://github.com/EvilLary/scratchway" }
-# scr_protocols = { git = "https://github.com/EvilLary/scratchway" }
+# scratchway = { path = "../scratchway/" }
+# scr_protocols = { path = "../scratchway/scr_protocols/" }
+scratchway = { git = "https://github.com/EvilLary/scratchway" }
+scr_protocols = { git = "https://github.com/EvilLary/scratchway" }
 libc = "0.2.180"
 
